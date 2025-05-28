@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <header style={{ padding: 20, borderBottom: "1px solid #ccc" }}>
+        <header style={{ padding: 20, marginBottom: 20, borderBottom: "2px solid #ccc" }}>
           <nav>
             <Link href="/" style={{ marginRight: 15 }}>
               Home
