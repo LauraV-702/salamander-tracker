@@ -14,7 +14,7 @@ const videos = [
 export default function VideoChooser() {
   return (
     <div>
-      <h1 style={{ fontSize: "3rem", fontWeight: "bold", marginLeft: 20}}>Available Videos</h1>
+      <h1 style={{ fontSize: "3rem", fontWeight: "bold", marginLeft: 15}}>Available Videos</h1>
       <ul style={{ paddingLeft: "1rem" }}>
         {videos.map((v) => (
           <li key={v} style={{ marginBottom: "0.5rem", fontSize: "1.2rem", marginLeft: 20, marginTop: 10 }}>
