@@ -6,7 +6,7 @@ export default function PreviewPage({ filename }) {
       <h1 style={{ marginBottom: 25, marginLeft: 20 }}>Previewing: {filename}</h1>
       <video src={`/videos/${filename}`} controls width="600" />
       <div style={{ marginLeft: 30 }}>
-        <Link style={{ backgroundColor: "green", padding: 20}} href="/videos">Back to Videos</Link>
+        <Link style={{ backgroundColor: "limegreen", padding: 20}} href="/videos">Back to Videos</Link>
       </div>
     </div>
   );
