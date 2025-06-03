@@ -66,12 +66,12 @@ export default function PreviewPage() {
         </div>
         <div>
           <h3>Binarized Frame (with centroid)</h3>
-          <img
+          {/* <img
             src={binImageUrl}
             alt="Binarized"
             width="400"
             style={{ border: '1px solid gray' }}
-          />
+          /> */}
         </div>
       </div>
 
