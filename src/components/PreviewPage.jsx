@@ -8,6 +8,9 @@ export default function PreviewPage() {
   const { filename } = useParams();
   const [color, setColor] = useState('#551111');
   const [threshold, setThreshold] = useState(50);
+  const [jobId, setJobId] = useState(null);
+  const [jobStatus, setJobStatus] = useState(null);
+  const [resultLink, setResultLink] = useState(null);
   const canvasRef = useRef(null);
   const imageRef = useRef(null);
   const originalCanvasRef = useRef(null);
@@ -106,9 +109,7 @@ export default function PreviewPage() {
     let maxSize = 0;
     let maxCentroid = null;
 
-    const directions = [
-      [1, 0], [-1, 0], [0, 1], [0, -1]
-    ];
+    const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 
     function bfs(startY, startX) {
       let q = [[startY, startX]];
@@ -165,13 +166,37 @@ export default function PreviewPage() {
 
   const handleProcess = async () => {
     try {
-      await fetch(
+      const res = await fetch(
         `http://localhost:3001/process/${filename}?targetColor=${color.replace('#', '')}&threshold=${threshold}`,
         { method: 'POST' }
       );
+      const json = await res.json();
+      setJobId(json.jobId);
+      setJobStatus('Processing...');
+      pollStatus(json.jobId);
     } catch (err) {
-      // Handle error when needed
+      setJobStatus('Error submitting job');
     }
+  };
+
+  const pollStatus = async (id) => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`http://localhost:3001/process/${id}/status`);
+        const json = await res.json();
+        if (json.status === 'done') {
+          clearInterval(interval);
+          setJobStatus('Done!');
+          setResultLink(`http://localhost:3001${json.result}`);
+        } else if (json.status === 'error') {
+          clearInterval(interval);
+          setJobStatus('Error: ' + json.error);
+        }
+      } catch (err) {
+        clearInterval(interval);
+        setJobStatus('Error checking status');
+      }
+    }, 1000);
   };
 
   return (
@@ -208,6 +233,14 @@ export default function PreviewPage() {
       <button style={{ marginTop: 20 }} onClick={handleProcess}>
         Process Video with These Settings
       </button>
+      <div style={{ marginTop: 20 }}>
+        <strong>Status:</strong> {jobStatus || 'Not started'}
+      </div>
+      {resultLink && (
+        <div style={{ marginTop: 10 }}>
+          <a href={resultLink} target="_blank" rel="noopener noreferrer">Download Result CSV</a>
+        </div>
+      )}
       <div style={{ marginTop: 30 }}>
         <Link href="/videos">Back to Videos</Link>
       </div>
