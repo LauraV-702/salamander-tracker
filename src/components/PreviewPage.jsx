@@ -10,74 +10,92 @@ export default function PreviewPage() {
   const [threshold, setThreshold] = useState(50);
   const canvasRef = useRef(null);
   const imageRef = useRef(null);
-
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const originalCanvasRef = useRef(null);
 
   useEffect(() => {
-    if (!filename) return;
     const img = new Image();
     img.crossOrigin = 'Anonymous';
     img.src = `http://localhost:3001/thumbnail/${filename}`;
+    imageRef.current = img;
 
     img.onload = () => {
-      imageRef.current = img;
-      setImageLoaded(true);
+      processImage();
     };
   }, [filename]);
 
   useEffect(() => {
-    if (imageLoaded) {
+    if (imageRef.current && imageRef.current.complete) {
       processImage();
     }
-  }, [imageLoaded, color, threshold]);
+  }, [color, threshold]);
 
   const processImage = () => {
     const canvas = canvasRef.current;
-    if (!canvas || !imageRef.current) return;
+    const originalCanvas = originalCanvasRef.current;
+    if (!canvas || !originalCanvas) return;
 
     const ctx = canvas.getContext('2d');
-    const img = imageRef.current;
+    const originalCtx = originalCanvas.getContext('2d');
+    if (!ctx || !originalCtx) return;
 
-    canvas.width = img.width;
-    canvas.height = img.height;
-    ctx.drawImage(img, 0, 0);
+    const image = imageRef.current;
+    canvas.width = 400;
+    canvas.height = (image.height / image.width) * 400;
+    originalCanvas.width = 400;
+    originalCanvas.height = (image.height / image.width) * 400;
+
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    originalCtx.drawImage(image, 0, 0, originalCanvas.width, originalCanvas.height);
 
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const pixelData = imageData.data;
+    const data = imageData.data;
 
     const targetRGB = hexToRgb(color);
-    const binaryImage = [];
+    const binary = [];
 
     for (let y = 0; y < canvas.height; y++) {
-      binaryImage[y] = [];
+      binary[y] = [];
       for (let x = 0; x < canvas.width; x++) {
-        const pixelIndex = (y * canvas.width + x) * 4;
-        const red = pixelData[pixelIndex];
-        const green = pixelData[pixelIndex + 1];
-        const blue = pixelData[pixelIndex + 2];
+        const i = (y * canvas.width + x) * 4;
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
 
-        const distanceToTarget = Math.sqrt(
-          Math.pow(red - targetRGB.r, 2) +
-          Math.pow(green - targetRGB.g, 2) +
-          Math.pow(blue - targetRGB.b, 2)
+        const dist = Math.sqrt(
+          Math.pow(r - targetRGB.r, 2) +
+          Math.pow(g - targetRGB.g, 2) +
+          Math.pow(b - targetRGB.b, 2)
         );
 
-        const isWhite = distanceToTarget <= threshold;
-        binaryImage[y][x] = isWhite ? 1 : 0;
-
-        pixelData[pixelIndex] = isWhite ? 255 : 0;
-        pixelData[pixelIndex + 1] = isWhite ? 255 : 0;
-        pixelData[pixelIndex + 2] = isWhite ? 255 : 0;
+        if (dist <= threshold) {
+          binary[y][x] = 1;
+          data[i] = 255;
+          data[i + 1] = 255;
+          data[i + 2] = 255;
+        } else {
+          binary[y][x] = 0;
+          data[i] = 0;
+          data[i + 1] = 0;
+          data[i + 2] = 0;
+        }
       }
     }
 
+    const centroid = findCentroid(binary);
     ctx.putImageData(imageData, 0, 0);
-    const centroid = findCentroid(binaryImage);
+
     if (centroid) {
-      ctx.fillStyle = 'red';
+      ctx.strokeStyle = 'lime';
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.arc(centroid.x, centroid.y, 4, 0, 2 * Math.PI);
-      ctx.fill();
+      ctx.arc(centroid.x, centroid.y, 6, 0, 2 * Math.PI);
+      ctx.stroke();
+
+      originalCtx.strokeStyle = 'lime';
+      originalCtx.lineWidth = 2;
+      originalCtx.beginPath();
+      originalCtx.arc(centroid.x, centroid.y, 6, 0, 2 * Math.PI);
+      originalCtx.stroke();
     }
   };
 
@@ -92,32 +110,32 @@ export default function PreviewPage() {
       [1, 0], [-1, 0], [0, 1], [0, -1]
     ];
 
-    const bfs = (startY, startX) => {
-      const queue = [[startY, startX]];
-      const pixels = [];
+    function bfs(startY, startX) {
+      let q = [[startY, startX]];
+      let pixels = [];
       visited[startY][startX] = true;
 
-      while (queue.length > 0) {
-        const [currentY, currentX] = queue.shift();
-        pixels.push([currentY, currentX]);
+      while (q.length > 0) {
+        const [y, x] = q.shift();
+        pixels.push([y, x]);
 
         for (const [dy, dx] of directions) {
-          const newY = currentY + dy;
-          const newX = currentX + dx;
+          const ny = y + dy;
+          const nx = x + dx;
 
           if (
-            newY >= 0 && newY < height &&
-            newX >= 0 && newX < width &&
-            !visited[newY][newX] && binary[newY][newX] === 1
+            ny >= 0 && ny < height &&
+            nx >= 0 && nx < width &&
+            !visited[ny][nx] && binary[ny][nx] === 1
           ) {
-            visited[newY][newX] = true;
-            queue.push([newY, newX]);
+            visited[ny][nx] = true;
+            q.push([ny, nx]);
           }
         }
       }
 
       return pixels;
-    };
+    }
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
@@ -139,10 +157,10 @@ export default function PreviewPage() {
   };
 
   const hexToRgb = (hex) => {
-    const red = parseInt(hex.substring(1, 3), 16);
-    const green = parseInt(hex.substring(3, 5), 16);
-    const blue = parseInt(hex.substring(5, 7), 16);
-    return { r: red, g: green, b: blue };
+    const r = parseInt(hex.substr(1, 2), 16);
+    const g = parseInt(hex.substr(3, 2), 16);
+    const b = parseInt(hex.substr(5, 2), 16);
+    return { r, g, b };
   };
 
   return (
@@ -170,23 +188,12 @@ export default function PreviewPage() {
 
       <div style={{ display: 'flex', gap: 30 }}>
         <div>
-          <h3>Original Frame</h3>
-          <img
-            src={`http://localhost:3001/thumbnail/${filename}`}
-            alt="Original"
-            width="400"
-            style={{ border: '1px solid gray' }}
-          />
+          <h3>Original Frame (with centroid)</h3>
+          <canvas ref={originalCanvasRef} style={{ border: '1px solid gray', width: '400px' }} />
         </div>
         <div>
           <h3>Binarized Frame (with centroid)</h3>
-          <canvas ref={canvasRef} style={{ border: '1px solid gray' }} />
-          {/* <img
-            src={binImageUrl}
-            alt="Binarized"
-            width="400"
-            style={{ border: '1px solid gray' }}
-          /> */}
+          <canvas ref={canvasRef} style={{ border: '1px solid gray', width: '400px' }} />
         </div>
       </div>
 
