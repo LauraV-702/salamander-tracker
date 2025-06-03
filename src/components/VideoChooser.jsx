@@ -1,40 +1,40 @@
-import Link from "next/link";
+'use client';
 
-const videos = [
-  "chiikawa.mp4",
-  "ensantina.mp4",
-  "demo1.mp4",
-  "demo2.mov",
-  "salamander1.mp4",
-  "salamander2.mp4",
-  "forest_intro.mp4",
-  "pizza.mp4"
-];
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 
-export default function VideoChooser() {
+export default function VideoChooserPage() {
+  const [videos, setVideos] = useState([]);
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/videos');
+        const data = await response.json();
+        setVideos(data);
+      } catch (error) {
+        console.error('Error fetching videos:', error);
+      }
+    };
+
+    fetchVideos();
+  }, []);
+
   return (
     <div>
-      <h1 style={{ fontSize: "3rem", fontWeight: "bold", marginLeft: 15}}>Available Videos</h1>
-      <ul style={{ paddingLeft: "1rem" }}>
-        {videos.map((v) => (
-          <li key={v} style={{ marginBottom: "0.5rem", fontSize: "1.2rem", marginLeft: 20, marginTop: 10 }}>
-            {v} -{" "}
-            <Link
-              href={`/preview/${encodeURIComponent(v)}`}
-              style={{ textDecoration: "underline", color: "purple", marginRight: "1rem" }}
-            >
-              Preview
-            </Link>
-            -{" "}
-            <Link
-              href={`/playback/${encodeURIComponent(v)}`}
-              style={{ textDecoration: "underline", color: "blue" }}
-            >
-              Playback
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <h1>Available Videos</h1>
+      {videos.map((filename) => (
+        <div key={filename} style={{ marginBottom: 20 }}>
+          <h3>{filename}</h3>
+          <img
+            src={`http://localhost:3001/thumbnail/${filename}`}
+            alt={`Thumbnail for ${filename}`}
+            width="300"
+          />
+          <br />
+          <Link href={`/preview/${filename}`}>Preview</Link>
+        </div>
+      ))}
     </div>
   );
 }
