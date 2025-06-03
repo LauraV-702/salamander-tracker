@@ -181,6 +181,12 @@ export default function PreviewPage() {
         <div>
           <h3>Binarized Frame (with centroid)</h3>
           <canvas ref={canvasRef} style={{ border: '1px solid gray' }} />
+          {/* <img
+            src={binImageUrl}
+            alt="Binarized"
+            width="400"
+            style={{ border: '1px solid gray' }}
+          /> */}
         </div>
       </div>
 
