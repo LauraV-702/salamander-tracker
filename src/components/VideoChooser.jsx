@@ -3,12 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
+// Component that fetches and displays a list of available videos
 export default function VideoChooserPage() {
   const [videos, setVideos] = useState([]);
 
   useEffect(() => {
     const fetchVideos = async () => {
       try {
+        // Fetch the list of videos from the backend API
         const response = await fetch('http://localhost:3001/api/videos');
         const data = await response.json();
         setVideos(data);
@@ -17,6 +19,7 @@ export default function VideoChooserPage() {
       }
     };
 
+    // Call the async fetch function
     fetchVideos();
   }, []);
 

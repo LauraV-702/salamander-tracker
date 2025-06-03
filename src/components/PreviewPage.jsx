@@ -3,18 +3,18 @@
 import { useParams } from 'next/navigation';
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import JobStatus from './jobStatus';
 
-export default function PreviewPage() {
+// PreviewPage component shows image preview and processing controls
+function PreviewPage({ jobStatus, resultLink, onProcess }) {
   const { filename } = useParams();
   const [color, setColor] = useState('#551111');
   const [threshold, setThreshold] = useState(50);
-  const [jobId, setJobId] = useState(null);
-  const [jobStatus, setJobStatus] = useState(null);
-  const [resultLink, setResultLink] = useState(null);
   const canvasRef = useRef(null);
   const imageRef = useRef(null);
   const originalCanvasRef = useRef(null);
 
+  // Load image when filename changes
   useEffect(() => {
     const img = new Image();
     img.crossOrigin = 'Anonymous';
@@ -26,6 +26,7 @@ export default function PreviewPage() {
     };
   }, [filename]);
 
+  // Re-process image when color or threshold changes
   useEffect(() => {
     if (imageRef.current && imageRef.current.complete) {
       processImage();
@@ -56,6 +57,7 @@ export default function PreviewPage() {
     const targetRGB = hexToRgb(color);
     const binary = [];
 
+    // Binarizing pixels by color distance
     for (let y = 0; y < canvas.height; y++) {
       binary[y] = [];
       for (let x = 0; x < canvas.width; x++) {
@@ -164,39 +166,9 @@ export default function PreviewPage() {
     return { r, g, b };
   };
 
-  const handleProcess = async () => {
-    try {
-      const res = await fetch(
-        `http://localhost:3001/process/${filename}?targetColor=${color.replace('#', '')}&threshold=${threshold}`,
-        { method: 'POST' }
-      );
-      const json = await res.json();
-      setJobId(json.jobId);
-      setJobStatus('Processing...');
-      pollStatus(json.jobId);
-    } catch (err) {
-      setJobStatus('Error submitting job');
-    }
-  };
-
-  const pollStatus = async (id) => {
-    const interval = setInterval(async () => {
-      try {
-        const res = await fetch(`http://localhost:3001/process/${id}/status`);
-        const json = await res.json();
-        if (json.status === 'done') {
-          clearInterval(interval);
-          setJobStatus('Done!');
-          setResultLink(`http://localhost:3001${json.result}`);
-        } else if (json.status === 'error') {
-          clearInterval(interval);
-          setJobStatus('Error: ' + json.error);
-        }
-      } catch (err) {
-        clearInterval(interval);
-        setJobStatus('Error checking status');
-      }
-    }, 1000);
+  // Trigger processing job through the callback
+  const handleProcess = () => {
+    onProcess({ filename, color, threshold });
   };
 
   return (
@@ -247,3 +219,5 @@ export default function PreviewPage() {
     </div>
   );
 }
+
+export default JobStatus(PreviewPage);
