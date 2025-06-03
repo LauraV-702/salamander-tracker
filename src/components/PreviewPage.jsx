@@ -163,10 +163,20 @@ export default function PreviewPage() {
     return { r, g, b };
   };
 
+  const handleProcess = async () => {
+    try {
+      await fetch(
+        `http://localhost:3001/process/${filename}?targetColor=${color.replace('#', '')}&threshold=${threshold}`,
+        { method: 'POST' }
+      );
+    } catch (err) {
+      // Handle error when needed
+    }
+  };
+
   return (
     <div style={{ padding: 20 }}>
       <h1>Preview Processing</h1>
-
       <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
         <label style={{ marginRight: 10 }}>Target Color:</label>
         <input
@@ -185,7 +195,6 @@ export default function PreviewPage() {
         />
         <span style={{ marginLeft: 10 }}>{threshold}</span>
       </div>
-
       <div style={{ display: 'flex', gap: 30 }}>
         <div>
           <h3>Original Frame (with centroid)</h3>
@@ -196,7 +205,9 @@ export default function PreviewPage() {
           <canvas ref={canvasRef} style={{ border: '1px solid gray', width: '400px' }} />
         </div>
       </div>
-
+      <button style={{ marginTop: 20 }} onClick={handleProcess}>
+        Process Video with These Settings
+      </button>
       <div style={{ marginTop: 30 }}>
         <Link href="/videos">Back to Videos</Link>
       </div>
