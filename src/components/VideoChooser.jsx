@@ -21,20 +21,26 @@ export default function VideoChooserPage() {
   }, []);
 
   return (
-    <div>
-      <h1>Available Videos</h1>
-      {videos.map((filename) => (
-        <div key={filename} style={{ marginBottom: 20 }}>
-          <h3>{filename}</h3>
-          <img
-            src={`http://localhost:3001/thumbnail/${filename}`}
-            alt={`Thumbnail for ${filename}`}
-            width="300"
-          />
-          <br />
-          <Link href={`/preview/${filename}`}>Preview</Link>
-        </div>
-      ))}
+    <div style={{ padding: 20 }}>
+      <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>Available Videos</h1>
+      <ul>
+        {videos.map((filename) => (
+          <li key={filename}>
+            {filename} -{' '}
+            <Link href={`/preview/${filename}`}>
+              <u>Preview</u>
+            </Link>{' '}
+            -{' '}
+            <a
+              href={`http://localhost:3001/videos/${filename}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <u>Playback</u>
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
