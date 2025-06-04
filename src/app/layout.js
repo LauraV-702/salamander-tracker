@@ -8,22 +8,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
-        {/* Google Fonts */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=Quicksand:wght@300..700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body
         suppressHydrationWarning={true}
         style={{ fontFamily: '"Quicksand", sans-serif', margin: 0 }}
       >
         <header
           style={{
-            backgroundColor: '#D2D0A0', 
+            backgroundColor: '#D2D0A0',
             color: '#075B5E',
             padding: '16px 24px',
             display: 'flex',
