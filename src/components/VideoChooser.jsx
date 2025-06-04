@@ -2,15 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import {
-  Box,
-  Container,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  Button,
-} from '@mui/material';
+import { Box, Container, Typography, List, ListItem, ListItemText, Button } from '@mui/material';
 
 export default function VideoChooserPage() {
   const [videos, setVideos] = useState([]);

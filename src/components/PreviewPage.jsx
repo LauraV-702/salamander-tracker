@@ -160,7 +160,7 @@ function PreviewPage({ jobStatus, resultLink, onProcess }) {
     return maxCentroid;
   };
 
-  // Convert hex color (e.g. "#FF0000") to RGB object
+  // Convert hex color (like "#FF0000") to RGB object
   const hexToRgb = (hex) => {
     const r = parseInt(hex.substr(1, 2), 16);
     const g = parseInt(hex.substr(3, 2), 16);
@@ -174,7 +174,7 @@ function PreviewPage({ jobStatus, resultLink, onProcess }) {
   };
 
   return (
-    <div style={{ background: '#A7C957', minHeight: '100vh', padding: 40, fontFamily: 'sans-serif' }}>
+    <div style={{ background: '#DF9755', minHeight: '100vh', padding: 40, fontFamily: 'sans-serif' }}>
       <div
         style={{
           background: '#F2E8CF',
@@ -248,22 +248,36 @@ function PreviewPage({ jobStatus, resultLink, onProcess }) {
         </div>
 
         {resultLink && (
-          <div style={{ marginTop: 10, textAlign: 'center' }}>
+          <div style={{ marginTop: 10, textAlign: 'center', fontFamily: '"Cabin", sans-serif', color: '#333', fontSize: '18px' }}>
+            <span style={{ fontWeight: '600' }}>CSV Results: </span>
             <a
               href={resultLink}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: '#386641', textDecoration: 'underline' }}
+              style={{ color: '#D2665A', textDecoration: 'underline', fontWeight: '600' }}
             >
-              Download Result CSV
+              Spreadsheet Download
             </a>
           </div>
         )}
 
         <div style={{ marginTop: 30, textAlign: 'center' }}>
-          <Link href="/videos" style={{ color: '#386641', textDecoration: 'underline' }}>
-            Back to Videos
-          </Link>
+          <Link
+          href="/videos"
+          style={{
+            display: 'inline-block',
+            backgroundColor: '#624E88',
+            color: '#fff',
+            textDecoration: 'none',
+            padding: '8px 16px',
+            borderRadius: '8px',
+            fontWeight: 600,
+            fontFamily: '"Cabin", sans-serif',
+            textAlign: 'center',
+          }}
+        >
+          Back to Videos
+        </Link>
         </div>
       </div>
     </div>

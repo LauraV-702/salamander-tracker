@@ -7,10 +7,10 @@ export default function HomePage() {
   return (
     <Box
       sx={{
-        bgcolor: '#BC4749',
+        bgcolor: '#D2665A',
         minHeight: '100vh',
         py: 8,
-        fontFamily: '"Quicksand", sans-serif', // Apply Quicksand globally here
+        fontFamily: '"Quicksand", sans-serif',
       }}
     >
       <Container
@@ -27,25 +27,25 @@ export default function HomePage() {
           variant="h4"
           gutterBottom
           sx={{
-            fontFamily: '"Cabin", sans-serif', // Use Cabin for the heading
+            fontFamily: '"Cabin", sans-serif', 
             fontWeight: 700,
           }}
         >
-          🦎 Welcome to the Salamander Tracker!
+          Welcome to the Salamander Tracker!
         </Typography>
 
         <Typography
           variant="body1"
           sx={{
             mt: 2,
-            fontFamily: '"Quicksand", sans-serif', // Quicksand for body
+            fontFamily: '"Quicksand", sans-serif', 
             fontSize: '1.1rem',
           }}
         >
           Go to{' '}
           <Button
             variant="contained"
-            color="secondary"
+            color="primary"
             component={Link}
             href="/videos"
             sx={{
@@ -55,7 +55,7 @@ export default function HomePage() {
           >
             Videos
           </Button>{' '}
-          to see all available videos for Centroid Processing.
+          to see all available videos for Centroid Processing. 🦎
         </Typography>
       </Container>
     </Box>
