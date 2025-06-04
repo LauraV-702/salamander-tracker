@@ -50,10 +50,15 @@ export default function VideoChooserPage() {
         <Typography
           variant="h4"
           gutterBottom
-          sx={{ fontFamily: '"Cabin", sans-serif', fontWeight: 700 }}
+          sx={{
+            fontFamily: '"Cabin", sans-serif',
+            fontWeight: 700,
+            textAlign: 'center',
+          }}
         >
           🎥 Available Videos
         </Typography>
+
 
         <List>
           {videos.map((filename) => (

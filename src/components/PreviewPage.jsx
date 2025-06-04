@@ -104,6 +104,7 @@ function PreviewPage({ jobStatus, resultLink, onProcess }) {
     }
   };
 
+  // Find the largest connected blob of white pixels and calculate its centroid
   const findCentroid = (binary) => {
     const height = binary.length;
     const width = binary[0].length;
@@ -159,6 +160,7 @@ function PreviewPage({ jobStatus, resultLink, onProcess }) {
     return maxCentroid;
   };
 
+  // Convert hex color (e.g. "#FF0000") to RGB object
   const hexToRgb = (hex) => {
     const r = parseInt(hex.substr(1, 2), 16);
     const g = parseInt(hex.substr(3, 2), 16);
@@ -172,49 +174,97 @@ function PreviewPage({ jobStatus, resultLink, onProcess }) {
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Preview Processing</h1>
-      <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
-        <label style={{ marginRight: 10 }}>Target Color:</label>
-        <input
-          type="color"
-          value={color}
-          onChange={(e) => setColor(e.target.value)}
-          style={{ marginRight: 20 }}
-        />
-        <label style={{ marginRight: 10 }}>Threshold:</label>
-        <input
-          type="range"
-          min="0"
-          max="255"
-          value={threshold}
-          onChange={(e) => setThreshold(parseInt(e.target.value))}
-        />
-        <span style={{ marginLeft: 10 }}>{threshold}</span>
-      </div>
-      <div style={{ display: 'flex', gap: 30 }}>
-        <div>
-          <h3>Original Frame (with centroid)</h3>
-          <canvas ref={originalCanvasRef} style={{ border: '1px solid gray', width: '400px' }} />
+    <div style={{ background: '#A7C957', minHeight: '100vh', padding: 40, fontFamily: 'sans-serif' }}>
+      <div
+        style={{
+          background: '#F2E8CF',
+          maxWidth: 900,
+          margin: 'auto',
+          borderRadius: 12,
+          padding: 30,
+          color: '#333',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+        }}
+      >
+        <h1 style={{ textAlign: 'center' }}>Preview Processing</h1>
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            margin: '20px 0',
+            justifyContent: 'center',
+            gap: 20
+          }}
+        >
+          <label style={{ marginRight: 10 }}>Target Color:</label>
+          <input
+            type="color"
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+          />
+          <label style={{ marginRight: 10 }}>Threshold:</label>
+          <input
+            type="range"
+            min="0"
+            max="255"
+            value={threshold}
+            onChange={(e) => setThreshold(parseInt(e.target.value))}
+          />
+          <span style={{ marginLeft: 10 }}>{threshold}</span>
         </div>
-        <div>
-          <h3>Binarized Frame (with centroid)</h3>
-          <canvas ref={canvasRef} style={{ border: '1px solid gray', width: '400px' }} />
+
+        <div style={{ display: 'flex', gap: 30, justifyContent: 'center' }}>
+          <div>
+            <h3>Original Frame (with centroid)</h3>
+            <canvas ref={originalCanvasRef} style={{ border: '1px solid #333', borderRadius: 6 }} />
+          </div>
+          <div>
+            <h3>Binarized Frame (with centroid)</h3>
+            <canvas ref={canvasRef} style={{ border: '1px solid #333', borderRadius: 6 }} />
+          </div>
         </div>
-      </div>
-      <button style={{ marginTop: 20 }} onClick={handleProcess}>
-        Process Video with These Settings
-      </button>
-      <div style={{ marginTop: 20 }}>
-        <strong>Status:</strong> {jobStatus || 'Not started'}
-      </div>
-      {resultLink && (
-        <div style={{ marginTop: 10 }}>
-          <a href={resultLink} target="_blank" rel="noopener noreferrer">Download Result CSV</a>
+
+        <div style={{ textAlign: 'center' }}>
+          <button
+            style={{
+              marginTop: 20,
+              backgroundColor: '#386641',
+              color: 'white',
+              padding: '10px 20px',
+              border: 'none',
+              borderRadius: 8,
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+            onClick={handleProcess}
+          >
+            Process Video with These Settings
+          </button>
         </div>
-      )}
-      <div style={{ marginTop: 30 }}>
-        <Link href="/videos">Back to Videos</Link>
+
+        <div style={{ marginTop: 20, textAlign: 'center' }}>
+          <strong>Status:</strong> {jobStatus || 'Not started'}
+        </div>
+
+        {resultLink && (
+          <div style={{ marginTop: 10, textAlign: 'center' }}>
+            <a
+              href={resultLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#386641', textDecoration: 'underline' }}
+            >
+              Download Result CSV
+            </a>
+          </div>
+        )}
+
+        <div style={{ marginTop: 30, textAlign: 'center' }}>
+          <Link href="/videos" style={{ color: '#386641', textDecoration: 'underline' }}>
+            Back to Videos
+          </Link>
+        </div>
       </div>
     </div>
   );
