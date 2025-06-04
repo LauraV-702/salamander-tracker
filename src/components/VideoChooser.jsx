@@ -2,15 +2,22 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import {
+  Box,
+  Container,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Button,
+} from '@mui/material';
 
-// Component that fetches and displays a list of available videos
 export default function VideoChooserPage() {
   const [videos, setVideos] = useState([]);
 
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        // Fetch the list of videos from the backend API
         const response = await fetch('http://localhost:3001/api/videos');
         const data = await response.json();
         setVideos(data);
@@ -19,31 +26,88 @@ export default function VideoChooserPage() {
       }
     };
 
-    // Call the async fetch function
     fetchVideos();
   }, []);
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>Available Videos</h1>
-      <ul>
-        {videos.map((filename) => (
-          <li key={filename}>
-            {filename} -{' '}
-            <Link href={`/preview/${filename}`}>
-              <u>Preview</u>
-            </Link>{' '}
-            -{' '}
-            <a
-              href={`http://localhost:3001/videos/${filename}`}
-              target="_blank"
-              rel="noopener noreferrer"
+    <Box
+      sx={{
+        bgcolor: '#6A994E',
+        minHeight: '100vh',
+        py: 6,
+        fontFamily: '"Quicksand", sans-serif',
+      }}
+    >
+      <Container
+        maxWidth="sm"
+        sx={{
+          bgcolor: '#F2E8CF',
+          borderRadius: 3,
+          p: 4,
+          boxShadow: 3,
+        }}
+      >
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{ fontFamily: '"Cabin", sans-serif', fontWeight: 700 }}
+        >
+          🎥 Available Videos
+        </Typography>
+
+        <List>
+          {videos.map((filename) => (
+            <ListItem
+              key={filename}
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                mb: 2,
+                p: 2,
+                bgcolor: '#ffffff',
+                borderRadius: 2,
+                boxShadow: 1,
+              }}
             >
-              <u>Playback</u>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
+              <ListItemText
+                primary={filename}
+                primaryTypographyProps={{
+                  fontWeight: 'bold',
+                  sx: { fontFamily: '"Quicksand", sans-serif' },
+                }}
+              />
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button
+                  component={Link}
+                  href={`/preview/${filename}`}
+                  sx={{
+                    backgroundColor: '#386641',
+                    color: '#fff',
+                    '&:hover': {
+                      backgroundColor: '#2f5233',
+                    },
+                    fontFamily: '"Cabin", sans-serif',
+                    minWidth: '90px',
+                  }}
+                >
+                  Preview
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  href={`http://localhost:3001/videos/${filename}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{ fontFamily: '"Cabin", sans-serif', minWidth: '90px' }}
+                >
+                  Playback
+                </Button>
+              </Box>
+            </ListItem>
+          ))}
+        </List>
+      </Container>
+    </Box>
   );
 }
