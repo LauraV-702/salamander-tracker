@@ -1,25 +1,26 @@
-// cypress/e2e/salamander.cy.js
-
 describe('Centroid Finder UI Tests', () => {
   beforeEach(() => {
-    // Mock the GET /api/videos request with static data
-    cy.intercept('GET', '/api/videos', {
+    // Intercept video list API before visiting the page
+    cy.intercept('GET', 'http://localhost:3001/api/videos', {
       statusCode: 200,
       body: ['sample1.mp4', 'sample2.mp4'],
     }).as('getVideos');
 
     cy.visit('http://localhost:3000');
-
-    // Wait for the mocked API call
+    cy.get('[data-cy="video-btn"]').click();
     cy.wait('@getVideos');
   });
 
   it('displays video list and allows preview navigation', () => {
     cy.contains('🎥 Available Videos').should('exist');
-    cy.contains('sample1.mp4');
-    cy.contains('sample2.mp4');
+    cy.contains('sample1.mp4').should('exist');
+    cy.contains('sample2.mp4').should('exist');
 
-    cy.contains('sample1.mp4').parent().contains('Preview').click();
+    cy.contains('sample1.mp4')
+      .closest('li')
+      .contains('Preview')
+      .click();
+
     cy.url().should('include', '/preview/sample1.mp4');
   });
 
@@ -34,19 +35,20 @@ describe('Centroid Finder UI Tests', () => {
   });
 
   it('processes a video and displays result status', () => {
-    // Mock POST request to start the job
+    // Intercept processing job POST
     cy.intercept('POST', '/process/sample1.mp4*', {
       statusCode: 200,
       body: { jobId: 'abc123' },
     }).as('startJob');
 
-    // Mock GET request to poll job status
+    // Intercept polling status GET
     cy.intercept('GET', '/process/abc123/status', {
       statusCode: 200,
       body: { status: 'done', result: '/results/sample1.mp4.csv' },
     }).as('pollJob');
 
     cy.visit('http://localhost:3000/preview/sample1.mp4');
+
     cy.contains('Process Video with These Settings').click();
 
     cy.wait('@startJob');

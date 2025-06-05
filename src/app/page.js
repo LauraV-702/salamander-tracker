@@ -31,7 +31,7 @@ export default function HomePage() {
             fontWeight: 700,
           }}
         >
-          Welcome to the Salamander Tracker!
+          Welcome to the Salamander Tracker! 🦎
         </Typography>
 
         <Typography
@@ -44,6 +44,7 @@ export default function HomePage() {
         >
           Go to{' '}
           <Button
+            data-cy="video-btn"
             variant="contained"
             color="primary"
             component={Link}
@@ -55,7 +56,7 @@ export default function HomePage() {
           >
             Videos
           </Button>{' '}
-          to see all available videos for Centroid Processing. 🦎
+          to see all available videos for Centroid Processing. 
         </Typography>
       </Container>
     </Box>

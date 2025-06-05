@@ -40,6 +40,7 @@ export default function VideoChooserPage() {
         }}
       >
         <Typography
+          data-cy="available-videos"
           variant="h4"
           gutterBottom
           sx={{
@@ -50,7 +51,6 @@ export default function VideoChooserPage() {
         >
           🎥 Available Videos
         </Typography>
-
 
         <List>
           {videos.map((filename) => (
