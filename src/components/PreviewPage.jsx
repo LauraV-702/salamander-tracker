@@ -18,7 +18,7 @@ function PreviewPage({ jobStatus, resultLink, onProcess }) {
   useEffect(() => {
     const img = new Image();
     img.crossOrigin = 'Anonymous';
-    img.src = `http://localhost:3001/thumbnail/${filename}`;
+    img.src = `http://localhost:3000/thumbnail/${filename}`;
     imageRef.current = img;
 
     img.onload = () => {

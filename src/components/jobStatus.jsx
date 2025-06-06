@@ -10,7 +10,7 @@ export default function JobStatus(WrappedComponent) {
       try {
         // Send POST request to start processing with filename, color, and threshold
         const res = await fetch(
-          `http://localhost:3001/process/${filename}?targetColor=${color.replace('#', '')}&threshold=${threshold}`,
+          `http://localhost:3000/process/${filename}?targetColor=${color.replace('#', '')}&threshold=${threshold}`,
           { method: 'POST' }
         );
         const json = await res.json();
@@ -24,12 +24,12 @@ export default function JobStatus(WrappedComponent) {
     const pollStatus = async (jobId) => {
       const interval = setInterval(async () => {
         try {
-          const res = await fetch(`http://localhost:3001/process/${jobId}/status`);
+          const res = await fetch(`http://localhost:3000/process/${jobId}/status`);
           const json = await res.json();
           if (json.status === 'done') {
             clearInterval(interval);
             setJobStatus('Done!');
-            setResultLink(`http://localhost:3001${json.result}`);
+            setResultLink(`http://localhost:3000${json.result}`);
           } else if (json.status === 'error') {
             clearInterval(interval);
             setJobStatus('Error: ' + json.error);

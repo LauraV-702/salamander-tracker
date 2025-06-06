@@ -10,7 +10,7 @@ export default function VideoChooserPage() {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/videos');
+        const response = await fetch('http://localhost:3000/api/videos');
         const data = await response.json();
         setVideos(data);
       } catch (error) {
@@ -93,7 +93,7 @@ export default function VideoChooserPage() {
                 <Button
                   variant="outlined"
                   color="secondary"
-                  href={`http://localhost:3001/videos/${filename}`}
+                  href={`http://localhost:3000/videos/${filename}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   sx={{ fontFamily: '"Cabin", sans-serif', minWidth: '90px' }}
