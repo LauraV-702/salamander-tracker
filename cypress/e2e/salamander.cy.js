@@ -1,12 +1,12 @@
 describe('Centroid Finder UI Tests', () => {
   beforeEach(() => {
     // Intercept video list API before visiting the page
-    cy.intercept('GET', 'http://localhost:3001/api/videos', {
+    cy.intercept('GET', 'http://localhost:3000/api/videos', {
       statusCode: 200,
       body: ['sample1.mp4', 'sample2.mp4'],
     }).as('getVideos');
 
-    cy.visit('http://localhost:3000');
+    cy.visit('http://localhost:3001');
     cy.get('[data-cy="video-btn"]').click();
     cy.wait('@getVideos');
   });
@@ -25,7 +25,7 @@ describe('Centroid Finder UI Tests', () => {
   });
 
   it('loads preview page with controls and canvases', () => {
-    cy.visit('http://localhost:3000/preview/sample1.mp4');
+    cy.visit('http://localhost:3001/preview/sample1.mp4');
 
     cy.contains('Preview Processing').should('exist');
     cy.get('input[type="color"]').should('exist');
@@ -47,7 +47,7 @@ describe('Centroid Finder UI Tests', () => {
       body: { status: 'done', result: '/results/sample1.mp4.csv' },
     }).as('pollJob');
 
-    cy.visit('http://localhost:3000/preview/sample1.mp4');
+    cy.visit('http://localhost:3001/preview/sample1.mp4');
 
     cy.contains('Process Video with These Settings').click();
 
