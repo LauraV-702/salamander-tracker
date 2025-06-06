@@ -2,7 +2,7 @@
 
 Welcome to the Salamander Tracker! This web app lets you explore wildlife videos, highlight target colors (like salamanders), and download tracking results.
 
-There are **4** main pages. This guide walks through what each one does.
+There are **3** main pages. This guide walks through what each one does.
 
 ---
 
@@ -62,7 +62,7 @@ This page shows a preview frame from the video and lets you adjust your tracking
 
 ---
 
-## ⏱️ 4. Processing & Download Page
+## ⏱️ 3. Processing & Download 
 
 After you start processing:
 
