@@ -26,21 +26,17 @@ jobs:
 
       # 3. Install dependencies
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      # 4. Build frontend (needed for next start)
-      - name: Build frontend
-        run: npm run build
-
-      # 5. Run unit tests
+      # 4. Run unit tests
       - name: Run unit tests
         run: npm run test:unit
 
-      # 6. Run e2e tests (starts server automatically)
+      # 5. Run e2e tests (via npm script)
       - name: Run e2e tests
-        run: start-server-and-test start http://localhost:3001 cypress:run
+        run: npm run test:e2e
 
-      # 7. Build Docker image
+      # 6. Build Docker image
       - name: Build Docker image
         run: docker build -t salamander-frontend:latest .
 
@@ -62,7 +58,7 @@ jobs:
             docker pull salamander-frontend:latest
             docker stop salamander-frontend || true
             docker rm salamander-frontend || true
-            docker run -d --name salamander-frontend -p 3001:3001 \
+            docker run -d --name salamander-frontend -p 3000:3000 \
               -v /videos:/videos \
               -v /results:/results \
               salamander-frontend:latest
