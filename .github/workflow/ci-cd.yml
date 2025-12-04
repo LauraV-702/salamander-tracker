@@ -1,0 +1,64 @@
+name: Salamander Frontend CI/CD
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+  pull_request:
+    branches:
+      - dev
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # 4. Run unit tests
+      - name: Run unit tests
+        run: npm run test:unit
+
+      # 5. Run e2e tests
+      - name: Run end-to-end tests
+        run: npm run test:e2e
+
+      # 6. Build Docker image
+      - name: Build Docker image
+        run: docker build -t salamander-frontend:latest .
+
+  deploy:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Deploy to VM via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            docker pull salamander-frontend:latest
+            docker stop salamander-frontend || true
+            docker rm salamander-frontend || true
+            docker run -d --name salamander-frontend -p 3000:3000 \
+              -v /videos:/videos \
+              -v /results:/results \
+              salamander-frontend:latest
