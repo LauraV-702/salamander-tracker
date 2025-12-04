@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-  "test:unit": "jest",
-  "dev": "next dev -p 3001",
-  "build": "next build",
-  "start": "next start -p 3001",
-  "lint": "next lint",
-  "cypress-run": "cypress run",
-  "test:e2e": "npm run build && start-server-and-test 'npm start' http://localhost:3001 'npm run cypress-run'"
+    "test:unit": "jest",
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start -p 3001",
+    "lint": "next lint",
+    "cypress-run": "cypress run",
+    "test:e2e": "npm run build && start-server-and-test \"npm run start\" http://localhost:3001 \"npm run cypress-run\""
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
