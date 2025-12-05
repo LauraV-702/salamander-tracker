@@ -2,42 +2,32 @@ name: Salamander Frontend CI/CD
 
 on:
   push:
-    branches:
-      - dev
-      - main
+    branches: [ dev, main ]
   pull_request:
-    branches:
-      - dev
-      - main
+    branches: [ dev, main ]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      # 1. Checkout the code
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      # 3. Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # 4. Run unit tests
       - name: Run unit tests
         run: npm run test:unit
 
-      # 5. Run e2e tests (via npm script)
       - name: Run e2e tests
         run: npm run test:e2e
 
-      # 6. Build Docker image
-      - name: Build Docker image
+      - name: Build frontend Docker image
         run: docker build -t salamander-frontend:latest .
 
   deploy:
@@ -54,11 +44,29 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
+
           script: |
-            docker pull salamander-frontend:latest
+            echo "Pulling backend image..."
+            docker pull ghcr.io/qopci/salamander:latest
+
+            echo "Stopping existing containers..."
+            docker stop salamander-backend || true
             docker stop salamander-frontend || true
+
+            echo "Removing old containers..."
+            docker rm salamander-backend || true
             docker rm salamander-frontend || true
-            docker run -d --name salamander-frontend -p 3000:3000 \
+
+            echo "Starting backend..."
+            docker run -d --name salamander-backend \
+              -p 3000:3000 \
+              -v /videos:/videos \
+              -v /results:/results \
+              ghcr.io/qopci/salamander:latest
+
+            echo "Starting frontend..."
+            docker run -d --name salamander-frontend \
+              -p 3001:3000 \
               -v /videos:/videos \
               -v /results:/results \
               salamander-frontend:latest
